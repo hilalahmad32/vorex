@@ -42,10 +42,11 @@ class RegisteredUserController extends Controller
             'phone' => ['string', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'country' => ['required', 'string', 'max:255'],
-            'photo' => ['image'],
         ]);
-
         if ($request->hasFile('photo')) {
+            $request->validate([
+                'photo' => ['image']
+                ]);
             $photo = FileUploadController::storeImage($request->input('photo'));
         }
 
@@ -60,9 +61,7 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
-
         return redirect(RouteServiceProvider::HOME);
     }
 }
